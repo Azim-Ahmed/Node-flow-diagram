@@ -1,0 +1,29 @@
+.updatenode__controls {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    z-index: 4;
+    font-size: 12px;
+    border: 2px solid gray ;
+    background:rgb(193, 163, 163);
+    border-radius: 5px;
+    padding: 15px;
+    color: white;
+    height: 485px;
+  }
+  .fieldtextcol{
+    color: black
+  }
+
+  .updatenode__controls label {
+    display: block;
+    border: 2px;
+
+  }
+
+  .updatenode__bglabel {
+    margin-top: 10px;
+    border: 2px;
+
+  }
+

@@ -1,0 +1,482 @@
+import React, {
+  useState,
+  useRef,
+  useCallback,
+  useEffect,
+  useMemo,
+} from "react";
+import ReactFlow, {
+  ReactFlowProvider,
+  addEdge,
+  useNodesState,
+  useEdgesState,
+  Controls,
+  Background,
+  applyEdgeChanges,
+  applyNodeChanges,
+  Handle,
+  Position,
+} from "react-flow-renderer";
+import { Sidebar } from "../components";
+import "../assets/Css/updatenode.css";
+import "../index.css";
+import { GrAdd } from "react-icons/gr";
+import { nanoid } from "nanoid";
+import { Grid } from "@mui/material";
+
+const DynOutputHandle = (props) => {
+  const { idx } = props;
+
+  return (
+    <Handle
+      type={"target"}
+      id={`output${idx}`}
+      position={Position.Up}
+      style={{ left: 10 + idx * 20 }}
+    />
+  );
+};
+
+const DynInputHandle = (props) => {
+  const { idx } = props;
+
+  return (
+    <Handle
+      type={"source"}
+      id={`source${idx}`}
+      position={Position.Bottom}
+      style={{ left: 10 + idx * 20 }}
+    />
+  );
+};
+
+const CustomInputNode = ({ data }, props) => {
+  const [outputcount, setOutputCount] = useState(1);
+
+  return (
+    <>
+      <div className=" hover:border-green-500 rounded-md">
+        {data.label}
+        <hr />
+        <div className="text sm fill-purple-700 hover:fill-green-500 my-1">
+          <GrAdd onClick={() => setOutputCount((i) => i + 1)} />
+        </div>
+      </div>
+      <div>
+        {Array(outputcount)
+          .fill(null)
+          .map((_, i) => (
+            <DynInputHandle key={i} idx={i} />
+          ))}
+      </div>
+    </>
+  );
+};
+const CustomOutputNode = ({ data }, props) => {
+  const [outputcount, setOutputCount] = useState(1);
+
+  return (
+    <>
+      <div className="py-1 hover:border-green-500 rounded-md">
+        <div>
+          {Array(outputcount)
+            .fill(null)
+            .map((_, i) => (
+              <DynOutputHandle key={i} idx={i} />
+            ))}
+        </div>
+
+        <div className="text sm fill-purple-700 hover:fill-green-500 my-1">
+          <GrAdd onClick={() => setOutputCount((i) => i + 1)} />
+        </div>
+        <hr />
+        {data.label}
+      </div>
+    </>
+  );
+};
+const CustomFunctionNode = ({ data }, props) => {
+  const [outputcount, setOutputCount] = useState(1);
+  const [inputcount, setInputCount] = useState(1);
+
+  return (
+    <>
+      <div className="py-1 hover:border-green-500 rounded-md">
+        <div className=" my-1">
+          <GrAdd onClick={() => setOutputCount((i) => i + 1)} />
+        </div>
+        <hr />
+        <div>
+          {Array(outputcount)
+            .fill(null)
+            .map((_, i) => (
+              <DynOutputHandle key={i} idx={i} />
+            ))}
+        </div>
+        <div>
+          {Array(inputcount)
+            .fill(null)
+            .map((_, i) => (
+              <DynInputHandle key={i} idx={i} />
+            ))}
+        </div>
+        {data.label}
+        <hr />
+        <div className="text sm fill-purple-700 hover:fill-green-500 my-1">
+          <GrAdd onClick={() => setInputCount((i) => i + 1)} />
+        </div>
+      </div>
+    </>
+  );
+};
+
+const initialNodes = [];
+const Flow = () => {
+  const reactFlowWrapper = useRef(null);
+  const [nodes, setNodes] = useNodesState(initialNodes);
+  const [edges, setEdges] = useEdgesState([]);
+  const [reactFlowInstance, setReactFlowInstance] = useState(null);
+  const [nodeName, setNodeName] = useState("NULL");
+  const [nodeBg, setNodeBg] = useState("NULL");
+  const [group, setGroup] = useState("");
+  const nodeTypes = useMemo(
+    () => ({
+      customOutput: CustomOutputNode,
+      customInput: CustomInputNode,
+      customFunction: CustomFunctionNode,
+    }),
+    []
+  );
+  const [sizeX, setSizeX] = useState(0);
+  const [sizeY, setSizeY] = useState(0);
+  const [type, setType] = useState();
+  const [parent, setParent] = useState();
+  const [id, setID] = useState();
+  const [jsonInput, setJsonInput] = useState("");
+
+  const convert = useCallback(
+    (event) => {
+      const jsonNode = JSON.parse(jsonInput);
+      setNodes((nds) => nds.concat(jsonNode));
+      console.log(jsonNode);
+    },
+    [jsonInput, setNodes]
+  );
+
+  const onNodesChange = useCallback(
+    (changes) => {
+      setNodes((nds) => applyNodeChanges(changes, nds));
+    },
+    [setNodes]
+  );
+  const onEdgesChange = useCallback(
+    (changes) => {
+      setEdges((eds) => applyEdgeChanges(changes, eds));
+    },
+    [setEdges]
+  );
+
+  const onConnect = useCallback(
+    (params) => {
+      setEdges((eds) =>
+        addEdge(
+          { ...params, animated: true, style: { stroke: "#FF00CB" } },
+          eds
+        )
+      );
+    },
+    [setEdges]
+  );
+
+  const onDragOver = useCallback((event) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+  }, []);
+
+  useEffect(() => {
+    setNodes((nds) =>
+      nds.map((node) => {
+        let x = 0;
+        let y = 0;
+        if (node.id === parent) {
+          x = node.position.x;
+          y = node.position.y;
+          console.log("parent: " + node.id + " " + parent);
+          console.log("parent posx: " + x);
+          console.log("parent posy: " + y);
+        } else if (node.selected === true && node.type !== "group") {
+          node.parentNode = parent;
+          node.position.x = x;
+          node.position.y = y;
+          node.extent = "parent";
+        }
+        return node;
+      })
+    );
+  }, [parent, setNodes]);
+
+  useEffect(() => {
+    setNodes((nds) =>
+      nds.map((node) => {
+        if (node.selected === true) {
+          node.data = {
+            ...node.data,
+            label: nodeName,
+          };
+          node.style = { ...node.style, backgroundColor: nodeBg };
+          console.log("size: " + sizeX);
+
+          node.style.width = parseInt(sizeX);
+          node.style.height = parseInt(sizeY);
+
+          // node.style={...node.style, height:sizeY}
+          // node.style={...node.style, width:sizeX}
+        }
+
+        return node;
+      })
+    );
+  }, [nodeName, nodeBg, sizeX, sizeY, setNodes]);
+
+  useEffect(() => {
+    setNodes((nds) =>
+      nds.map((node) => {
+        if (node.selected === true) {
+          console.log("selected found");
+          // when you update a simple type you can just update the value
+          node.type = "group";
+
+          setType(node.type);
+
+          setGroup("");
+        }
+        console.log("not selected");
+        return node;
+      })
+    );
+  }, [group, setNodes]);
+
+  const onDrop = useCallback(
+    (event) => {
+      event.preventDefault();
+
+      const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+      const type = event.dataTransfer.getData("application/reactflow");
+      const label = event.dataTransfer.getData("application/reactflow/label");
+      const bgCol = event.dataTransfer.getData("application/reactflow/color");
+      console.log(type);
+      // check if the dropped element is valid
+      if (typeof type === "undefined" || !type) {
+        return;
+      }
+
+      const position = reactFlowInstance.project({
+        x: event.clientX - reactFlowBounds.left,
+        y: event.clientY - reactFlowBounds.top,
+      });
+      let heightl = 50;
+      let w = 200;
+      if (type === "customFunction") {
+        heightl = 80;
+      }
+
+      const newNode = {
+        id: `flow_azim_renderer_${nanoid(15)}`,
+        type,
+        position,
+        data: { label: `${label}` },
+        style: {
+          backgroundColor: bgCol,
+          width: w,
+          height: heightl,
+          borderRadius: 6,
+          borderColor: "#1111",
+        },
+      };
+      // setType(type)
+      // setNodeBg(bgCol)
+      // setNodeName(label)
+      setNodes((nds) => nds.concat(newNode));
+      // setSizeX(w)
+      // setSizeY(heightl)
+    },
+    [reactFlowInstance, setNodes]
+  );
+
+  const graphStyles = { width: "100%", height: "600px" };
+  return (
+    <div className="bg-indigo-100 py-2">
+      <div className>
+        <ReactFlowProvider>
+          <Grid container spacing={2}>
+            <Grid item xs={2}>
+              <Sidebar />
+            </Grid>
+            <Grid item xs={10}>
+              <div
+                className=" bg-indigo-300 rounded-md my-1 mx-2 border-2 border-indigo-400"
+                ref={reactFlowWrapper}
+              >
+                <ReactFlow
+                  nodes={nodes}
+                  edges={edges}
+                  onNodesChange={onNodesChange}
+                  onEdgesChange={onEdgesChange}
+                  onConnect={onConnect}
+                  onInit={setReactFlowInstance}
+                  onDrop={onDrop}
+                  onDragOver={onDragOver}
+                  onNodeDragStart={(event, node) => {
+                    event.preventDefault();
+                    setNodeBg(node.style.backgroundColor);
+                    setNodeName(node.data.label);
+                    setSizeX(node.style.width);
+                    setSizeY(node.style.height);
+                    setType(node.type);
+                    setID(node.id);
+                    console.log("type: " + node.type);
+                    console.log("x " + node.style.width);
+                    console.log("y " + node.style.height);
+                  }}
+                  nodeTypes={nodeTypes}
+                  onNodeClick={(event, node) => {
+                    console.log({ node });
+                    event.preventDefault();
+                    setNodeBg(node.style.backgroundColor);
+                    setNodeName(node.data.label);
+                    setSizeX(node.style.width);
+                    setSizeY(node.style.height);
+                    setType(node.type);
+                    setID(node.id);
+                    if (node.type === "group") {
+                    }
+                    console.log("type: " + node.type);
+                    console.log("x " + node.style.width);
+                    console.log("y " + node.style.height);
+                    console.log("id: " + node.id);
+                    console.log("parent: " + node.parentNode);
+                  }}
+                  style={graphStyles}
+                >
+                  {/* <div className="rounded-md text-center bg-emerald-400 my-1 w-48 mx-4">
+                Click on Node to see Data
+              </div> */}
+                  <div className="updatenode__controls ">
+                    <div className="grid grid-cols-1 divide-y divide-black">
+                      <div>
+                        <label>Label:</label>
+                        <input
+                          className="border-2 border-indigo-500/50 rounded-md px-1 text-black"
+                          value={nodeName}
+                          onChange={(evt) => setNodeName(evt.target.value)}
+                        />
+                        <label className="updatenode__bglabel">
+                          Background:
+                        </label>
+                        <input
+                          className="border-2 border-indigo-500/50 rounded-md px-1 text-black"
+                          value={nodeBg}
+                          onChange={(evt) => setNodeBg(evt.target.value)}
+                        />
+                        <div className="updatenode__checkboxwrapper">
+                          <label>Group</label>
+                          <button
+                            className="rounded-md text-black bg-white hover:bg-rose-400 my-1 py-1 px-1"
+                            onClick={(evt) => setGroup("a")}
+                          >
+                            {" "}
+                            Make Group
+                          </button>
+                        </div>
+                        <label className="updatenode__bglabel">Width:</label>
+                        <input
+                          className="border-2 border-indigo-500/50 rounded-md px-1 text-black"
+                          value={sizeX}
+                          onChange={(evt) => setSizeX(evt.target.value)}
+                        />
+                        <label className="updatenode__bglabel">Height:</label>
+                        <input
+                          className="border-2 border-indigo-500/50 rounded-md px-1 text-black"
+                          value={sizeY}
+                          onChange={(evt) => setSizeY(evt.target.value)}
+                        />
+                        <div>
+                          <div className="py-1">Info:</div>
+                          <div>Type: {type}</div>
+                          <div>ID: {id}</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <div>Nodes on Board:</div>
+                      <div className="py-1 px-1 border-2 h-36 rounded-md overflow-y-scroll">
+                        {nodes.map((node, key) => {
+                          return (
+                            <div
+                              key={key}
+                              className="grid grid-cols-2 static py-1"
+                            >
+                              <div>{node.data.label}</div>
+                              <div
+                                className={
+                                  node.type === "group"
+                                    ? "relative right-0 rounded-md px-2 mx-1 bg-green-400 text-black hover:cursor-pointer"
+                                    : "relative right-0 rounded-md px-2 mx-1 bg-red-400"
+                                }
+                                onClick={(evt) => {
+                                  setParent(node.id);
+                                  console.log(parent);
+                                }}
+                              >
+                                {node.type === "group" ? "Join" : ""}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                  <Controls />
+                  <Background color="#03C875" />
+                </ReactFlow>
+              </div>
+            </Grid>
+          </Grid>
+        </ReactFlowProvider>
+      </div>
+      <div name="flex justify-center absolute bottom-0 ">
+        <div className="mx-2 mb-3 xl:w-96">
+          <label
+            htmlFor="exampleFormControlTextarea1"
+            className="form-label inline-block mb-2 text-white"
+          >
+            Input Form
+          </label>
+          <textarea
+            className="form-control block w-full h-52 px-3 py-1.5 text-sm font-normal text-white bg-indigo-600 bg-clip-padding
+        border border-solid border-gray-300 rounded transition
+        ease-in-out m-0 focus:text-white focus:bg-indigo-500 focus:border-blue-600 focus:outline-none
+      "
+            id="exampleFormControlTextarea1"
+            rows="3"
+            placeholder="paste ypur JSON"
+            value={jsonInput}
+            onChange={(e) => {
+              setJsonInput(e.target.value);
+            }}
+          />
+        </div>
+      </div>
+      <div
+        className="rounded-lg text-center bg-green-200 my-3 py-1 w-40  mx-2 hover:bg-green-300"
+        onClick={(e) => {
+          convert();
+        }}
+      >
+        Convert
+      </div>
+    </div>
+  );
+};
+
+export default Flow;

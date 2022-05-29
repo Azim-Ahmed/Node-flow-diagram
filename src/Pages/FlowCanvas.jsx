@@ -15,6 +15,7 @@ import ReactFlow, {
   applyNodeChanges,
   MiniMap,
   updateEdge,
+  MarkerType,
 } from "react-flow-renderer";
 import TextField from "@mui/material/TextField";
 import { Layout, Sidebar } from "../components";
@@ -27,7 +28,9 @@ import DynOutputHandle from "../components/FlowComponents/Handler/DynOutputHandl
 import DynInputHandle from "../components/FlowComponents/Handler/DynInputHandle";
 import CustomInputNode from "../components/FlowComponents/Nodes/CustomInputNode";
 import CustomOutputNode from "../components/FlowComponents/Nodes/CustomOutputNode";
-import SummaryNodes from "../components/FlowComponents/SummaryNodes";
+import CustomEdge from "../components/FlowComponents/CustomEdge";
+import ConnectionLine from "../components/FlowComponents/CustomEdge/ConnectionLine";
+// import SummaryNodes from "../components/FlowComponents/SummaryNodes";
 
 const CustomFunctionNode = ({ data }, props) => {
   const [outputcount, setOutputCount] = useState(1);
@@ -82,6 +85,12 @@ const FlowCanvas = () => {
     }),
     []
   );
+  const edgeTypes = useMemo(
+    () => ({
+      custom: CustomEdge,
+    }),
+    []
+  );
   const [sizeX, setSizeX] = useState(0);
   const [sizeY, setSizeY] = useState(0);
   const [type, setType] = useState();
@@ -108,8 +117,11 @@ const FlowCanvas = () => {
           {
             ...params,
             type: "edge",
-            animated: true,
-            style: { stroke: "#FF00CB" },
+            animated: false,
+            style: { stroke: "black" },
+            markerEnd: {
+              type: MarkerType.ArrowClosed,
+            },
           },
           eds
         )
@@ -194,7 +206,7 @@ const FlowCanvas = () => {
       const type = event.dataTransfer.getData("application/reactflow");
       const label = event.dataTransfer.getData("application/reactflow/label");
       const bgCol = event.dataTransfer.getData("application/reactflow/color");
-      console.log(type);
+      console.log({ bgCol });
       // check if the dropped element is valid
       if (typeof type === "undefined" || !type) {
         return;
@@ -271,7 +283,7 @@ const FlowCanvas = () => {
             </Grid>
             <Grid ref={flowImageDownloadRef} item xs={10}>
               <div
-                className=" bg-indigo-300 rounded-md my-1 mx-2 border-2 border-indigo-400"
+                className=" bg-indigo-100 rounded-md my-1 mx-2 border-2 border-indigo-400"
                 ref={reactFlowWrapper}
               >
                 <ReactFlow
@@ -284,6 +296,8 @@ const FlowCanvas = () => {
                   onDrop={onDrop}
                   onDragOver={onDragOver}
                   onEdgeUpdate={onEdgeUpdate}
+                  connectionLineComponent={ConnectionLine}
+                  connectionLineType="smoothstep"
                   onNodeDragStart={(event, node) => {
                     event.preventDefault();
                     setNodeBg(node.style.backgroundColor);
@@ -298,6 +312,7 @@ const FlowCanvas = () => {
                   }}
                   onPaneClick={onPaneClick}
                   nodeTypes={nodeTypes}
+                  edgeTypes={edgeTypes}
                   onNodeClick={onNodeClick}
                   style={graphStyles}
                 >

@@ -30,6 +30,7 @@ import CustomInputNode from "../components/FlowComponents/Nodes/CustomInputNode"
 import CustomOutputNode from "../components/FlowComponents/Nodes/CustomOutputNode";
 import CustomEdge from "../components/FlowComponents/CustomEdge";
 import ConnectionLine from "../components/FlowComponents/CustomEdge/ConnectionLine";
+import DecisionNode from "../components/FlowComponents/Nodes/DecisionNode";
 // import SummaryNodes from "../components/FlowComponents/SummaryNodes";
 
 const CustomFunctionNode = ({ data }, props) => {
@@ -80,6 +81,7 @@ const FlowCanvas = () => {
   const nodeTypes = useMemo(
     () => ({
       customOutput: CustomOutputNode,
+      decision: DecisionNode,
       customInput: CustomInputNode,
       customFunction: CustomFunctionNode,
     }),
@@ -214,23 +216,40 @@ const FlowCanvas = () => {
         y: event.clientY - reactFlowBounds.top,
       });
       let heightl = 60;
+      let newNode;
       if (type === "customFunction") {
         heightl = 86;
       }
+      if (type === "decision") {
+        newNode = {
+          id: `flow_azim_renderer_${uuidv4()}`,
+          type,
+          position,
+          data: { label: `${label}` },
+          style: {
+            backgroundColor: "",
+            width: "",
+            height: "",
+            borderRadius: 6,
+            borderColor: "#1111",
+          },
+        };
+      } else {
+        newNode = {
+          id: `flow_azim_renderer_${uuidv4()}`,
+          type,
+          position,
+          data: { label: `${label}` },
+          style: {
+            backgroundColor: bgCol,
+            width: 200,
+            height: heightl,
+            borderRadius: 6,
+            borderColor: "#1111",
+          },
+        };
+      }
 
-      const newNode = {
-        id: `flow_azim_renderer_${uuidv4()}`,
-        type,
-        position,
-        data: { label: `${label}` },
-        style: {
-          backgroundColor: bgCol,
-          width: 200,
-          height: heightl,
-          borderRadius: 6,
-          borderColor: "#1111",
-        },
-      };
       // setType(type)
       // setNodeBg(bgCol)
       // setNodeName(label)
@@ -322,6 +341,7 @@ const FlowCanvas = () => {
                           <TextField
                             label={`Background:`}
                             value={nodeBg}
+                            disabled={type === "decision" ? true : false}
                             onChange={(evt) => setNodeBg(evt.target.value)}
                             id="outlined-basic"
                             variant="outlined"
@@ -340,6 +360,7 @@ const FlowCanvas = () => {
                           <TextField
                             label={`Width:`}
                             value={sizeX}
+                            disabled={type === "decision" ? true : false}
                             onChange={(evt) => setSizeX(evt.target.value)}
                             id="outlined-basic"
                             variant="outlined"
@@ -347,6 +368,7 @@ const FlowCanvas = () => {
                           <TextField
                             label={`Height:`}
                             value={sizeY}
+                            disabled={type === "decision" ? true : false}
                             onChange={(evt) => setSizeY(evt.target.value)}
                             id="outlined-basic"
                             variant="outlined"

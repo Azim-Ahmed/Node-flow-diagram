@@ -1,6 +1,5 @@
 import { Handle, Position } from "react-flow-renderer";
-const DynInputHandle = (props) => {
-  const { idx } = props;
+const DynInputHandle = ({ idx }) => {
   return (
     <Handle
       type={"source"}

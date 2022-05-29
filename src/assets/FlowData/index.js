@@ -14,6 +14,13 @@ export const flowData = [
         title: "Drag this INPUT_2"
     },
     {
+        style: "bg-blue-200 w-40 my-2 py-2 mx-2 rounded-md cursor-grab shadow-lg",
+        type: "decision",
+        text: "Decision",
+        color: "#d5f692",
+        title: "Drag this Decision"
+    },
+    {
         style: "bg-teal-200 w-40 my-2 py-2 mx-2 rounded-md cursor-grab shadow-lg",
         type: "customFunction",
         text: "NODE_EXEC_1",

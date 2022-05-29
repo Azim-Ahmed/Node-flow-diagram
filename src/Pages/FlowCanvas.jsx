@@ -206,20 +206,16 @@ const FlowCanvas = () => {
       const type = event.dataTransfer.getData("application/reactflow");
       const label = event.dataTransfer.getData("application/reactflow/label");
       const bgCol = event.dataTransfer.getData("application/reactflow/color");
-      console.log({ bgCol });
-      // check if the dropped element is valid
       if (typeof type === "undefined" || !type) {
         return;
       }
-
       const position = reactFlowInstance.project({
         x: event.clientX - reactFlowBounds.left,
         y: event.clientY - reactFlowBounds.top,
       });
-      let heightl = 50;
-      let w = 200;
+      let heightl = 60;
       if (type === "customFunction") {
-        heightl = 80;
+        heightl = 86;
       }
 
       const newNode = {
@@ -229,7 +225,7 @@ const FlowCanvas = () => {
         data: { label: `${label}` },
         style: {
           backgroundColor: bgCol,
-          width: w,
+          width: 200,
           height: heightl,
           borderRadius: 6,
           borderColor: "#1111",
@@ -255,12 +251,6 @@ const FlowCanvas = () => {
     setID(node.id);
     if (node.type === "group") {
     }
-
-    console.log("type: " + node.type);
-    console.log("x " + node.style.width);
-    console.log("y " + node.style.height);
-    console.log("id: " + node.id);
-    console.log("parent: " + node.parentNode);
   };
 
   const onPaneClick = (event) => setOpenEditor(false);

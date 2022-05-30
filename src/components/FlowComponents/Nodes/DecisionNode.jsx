@@ -34,7 +34,9 @@ const DecisionNode = ({ data }) => {
           textAlign: "center",
           fontWeight: "500",
           //   whiteSpace: "nowrap",
-          width: "80px",
+          marginLeft: "10px",
+          marginTop: "20px",
+          // width: "80px",
           overflow: "hidden",
           textOverflow: "ellipsis",
         }}

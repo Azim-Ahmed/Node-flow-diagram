@@ -11,8 +11,8 @@ import ReactFlow, {
   useEdgesState,
   Controls,
   Background,
-  applyEdgeChanges,
-  applyNodeChanges,
+  // applyEdgeChanges,
+  // applyNodeChanges,
   MiniMap,
   updateEdge,
   MarkerType,
@@ -78,6 +78,7 @@ const FlowCanvas = () => {
   const [nodeName, setNodeName] = useState("NULL");
   const [nodeBg, setNodeBg] = useState("NULL");
   const [group, setGroup] = useState("");
+
   const nodeTypes = useMemo(
     () => ({
       customOutput: CustomOutputNode,

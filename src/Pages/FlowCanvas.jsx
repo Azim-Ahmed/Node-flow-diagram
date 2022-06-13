@@ -31,6 +31,7 @@ import CustomOutputNode from "../components/FlowComponents/Nodes/CustomOutputNod
 import CustomEdge from "../components/FlowComponents/CustomEdge";
 import ConnectionLine from "../components/FlowComponents/CustomEdge/ConnectionLine";
 import DecisionNode from "../components/FlowComponents/Nodes/DecisionNode";
+import CircleNode from "../components/FlowComponents/Nodes/CircleNode";
 // import SummaryNodes from "../components/FlowComponents/SummaryNodes";
 
 const CustomFunctionNode = ({ data }, props) => {
@@ -85,6 +86,7 @@ const FlowCanvas = () => {
       decision: DecisionNode,
       customInput: CustomInputNode,
       customFunction: CustomFunctionNode,
+      circle: CircleNode,
     }),
     []
   );
@@ -216,10 +218,28 @@ const FlowCanvas = () => {
         x: event.clientX - reactFlowBounds.left,
         y: event.clientY - reactFlowBounds.top,
       });
-      let heightl = 60;
       let newNode;
-      if (type === "customFunction") {
-        heightl = 86;
+      // customOutput: CustomOutputNode,
+      // decision: DecisionNode,
+      // customInput: CustomInputNode,
+      // customFunction: CustomFunctionNode,
+      // circle: CircleNode,
+
+      if (type === "circle") {
+        newNode = {
+          id: `flow_azim_renderer_${uuidv4()}`,
+          type,
+          position,
+          data: { label: `${label}` },
+          style: {
+            backgroundColor: "white",
+            width: 80,
+            height: 80,
+            borderRadius: "50%",
+            border: "1px solid gray",
+          },
+        };
+        setNodes((nds) => nds.concat(newNode));
       }
       if (type === "decision") {
         newNode = {
@@ -235,7 +255,9 @@ const FlowCanvas = () => {
             borderColor: "#1111",
           },
         };
-      } else {
+        setNodes((nds) => nds.concat(newNode));
+      }
+      if (type === "customOutput") {
         newNode = {
           id: `flow_azim_renderer_${uuidv4()}`,
           type,
@@ -244,17 +266,52 @@ const FlowCanvas = () => {
           style: {
             backgroundColor: bgCol,
             width: 200,
-            height: heightl,
+            height: 60,
             borderRadius: 6,
             borderColor: "#1111",
           },
         };
+        setNodes((nds) => nds.concat(newNode));
       }
+      if (type === "customInput") {
+        newNode = {
+          id: `flow_azim_renderer_${uuidv4()}`,
+          type,
+          position,
+          data: { label: `${label}` },
+          style: {
+            backgroundColor: bgCol,
+            width: 200,
+            height: 60,
+            borderRadius: 6,
+            borderColor: "#1111",
+          },
+        };
+        setNodes((nds) => nds.concat(newNode));
+      }
+      if (type === "customFunction") {
+        newNode = {
+          id: `flow_azim_renderer_${uuidv4()}`,
+          type,
+          position,
+          data: { label: `${label}` },
+          style: {
+            backgroundColor: bgCol,
+            width: 200,
+            height: 86,
+            borderRadius: 6,
+            borderColor: "#1111",
+          },
+        };
+        setNodes((nds) => nds.concat(newNode));
+      }
+
+      // setNodes((nds) => nds.concat(newNode));
 
       // setType(type)
       // setNodeBg(bgCol)
       // setNodeName(label)
-      setNodes((nds) => nds.concat(newNode));
+
       // setSizeX(w)
       // setSizeY(heightl)
     },

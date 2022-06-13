@@ -36,6 +36,12 @@ export const flowData = [
 
     },
     {
+        style: "bg-blue-200 w-40 my-2 py-2 mx-2 rounded-md cursor-grab shadow-lg",
+        type: "circle",
+        text: "CIRCLE",
+        title: "Drag this INPUT_2"
+    },
+    {
         style: "bg-indigo-300 w-40 my-2 py-2 mx-2 rounded-md cursor-grab shadow-lg",
         type: "customOutput",
         text: "OUTPUT_1",

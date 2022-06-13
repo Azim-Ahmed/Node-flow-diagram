@@ -18,20 +18,21 @@ import ReactFlow, {
   MarkerType,
 } from "react-flow-renderer";
 import TextField from "@mui/material/TextField";
-import { Layout, Sidebar } from "../components";
-import "../assets/Css/updatenode.css";
-import "../index.css";
+import { Layout, Sidebar } from "../../components";
+import "../../assets/Css/updatenode.css";
+import "../../index.css";
 import { GrAdd } from "react-icons/gr";
 import { Grid } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
-import DynOutputHandle from "../components/FlowComponents/Handler/DynOutputHandle";
-import DynInputHandle from "../components/FlowComponents/Handler/DynInputHandle";
-import CustomInputNode from "../components/FlowComponents/Nodes/CustomInputNode";
-import CustomOutputNode from "../components/FlowComponents/Nodes/CustomOutputNode";
-import CustomEdge from "../components/FlowComponents/CustomEdge";
-import ConnectionLine from "../components/FlowComponents/CustomEdge/ConnectionLine";
-import DecisionNode from "../components/FlowComponents/Nodes/DecisionNode";
-import CircleNode from "../components/FlowComponents/Nodes/CircleNode";
+import DynOutputHandle from "../../components/FlowComponents/Handler/DynOutputHandle";
+import DynInputHandle from "../../components/FlowComponents/Handler/DynInputHandle";
+import CustomInputNode from "../../components/FlowComponents/Nodes/CustomInputNode";
+import CustomOutputNode from "../../components/FlowComponents/Nodes/CustomOutputNode";
+import CustomEdge from "../../components/FlowComponents/CustomEdge";
+import ConnectionLine from "../../components/FlowComponents/CustomEdge/ConnectionLine";
+import DecisionNode from "../../components/FlowComponents/Nodes/DecisionNode";
+import CircleNode from "../../components/FlowComponents/Nodes/CircleNode";
+import { edgeArrowId } from "../../helpers";
 // import SummaryNodes from "../components/FlowComponents/SummaryNodes";
 
 const CustomFunctionNode = ({ data }, props) => {
@@ -117,13 +118,26 @@ const FlowCanvas = () => {
 
   const onConnect = useCallback(
     (params) => {
+      if (!params?.source || !params?.target) {
+        return;
+      }
+      const source = params?.source;
+      const target = params.target;
+      const newDecisionLineEdge = source.match(/decision/g);
+      const newEdgeId = edgeArrowId(source, target);
+      // const newSource = new Array(source);
+      // const newTarget = new Array(target);
       setEdges((eds) =>
         addEdge(
           {
             ...params,
-            type: "edge",
+            id: newEdgeId,
+            type: "custom",
             animated: false,
             style: { stroke: "black" },
+            data: {
+              text: newDecisionLineEdge ? "Enter your line" : "",
+            },
             markerEnd: {
               type: MarkerType.ArrowClosed,
             },
@@ -219,11 +233,6 @@ const FlowCanvas = () => {
         y: event.clientY - reactFlowBounds.top,
       });
       let newNode;
-      // customOutput: CustomOutputNode,
-      // decision: DecisionNode,
-      // customInput: CustomInputNode,
-      // customFunction: CustomFunctionNode,
-      // circle: CircleNode,
 
       if (type === "circle") {
         newNode = {
@@ -340,7 +349,10 @@ const FlowCanvas = () => {
       setJsonInput={setJsonInput}
       convert={convert}
       flowImageDownloadRef={flowImageDownloadRef}
-      downloadJSON={[...edges, ...nodes]}
+      edges={edges}
+      nodes={nodes}
+      setEdges={setEdges}
+      setNodes={setNodes}
     >
       <div className="bg-indigo-100 py-2">
         <div className>

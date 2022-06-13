@@ -4,6 +4,9 @@ export function removeDuplicates(arr) {
     return arr.filter((item,
         index) => arr.indexOf(item) === index);
 }
+export function edgeArrowId(source, target) {
+    return `${source}>${target}`;
+}
 export function addDuplicates(arr) {
     return arr.filter((item,
         index) => arr.indexOf(item) === index);

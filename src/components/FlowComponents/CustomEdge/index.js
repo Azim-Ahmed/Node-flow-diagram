@@ -34,11 +34,11 @@ export default function CustomEdge({
             <text>
                 <textPath
                     href={`#${id}`}
-                    style={{ fontSize: '12px' }}
+                    style={{ fontSize: '12px', color: "black" }}
                     startOffset="50%"
                     textAnchor="middle"
                 >
-                    {data.text}
+                    {data?.text}
                 </textPath>
             </text>
         </>

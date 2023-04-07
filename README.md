@@ -6,5 +6,5 @@
 ### node version : 14.17.0 , yarn version: 1.22.1
 
 
-## check this repo as well 
+## check this repo as well for automation
 - https://github.com/Azim-Ahmed/Automation-workflow

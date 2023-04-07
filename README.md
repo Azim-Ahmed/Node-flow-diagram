@@ -4,3 +4,7 @@
 ### to run this application you just have to these in your computer ;
 
 ### node version : 14.17.0 , yarn version: 1.22.1
+
+
+## check this repo as well 
+- https://github.com/Azim-Ahmed/Automation-workflow

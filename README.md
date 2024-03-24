@@ -6,7 +6,7 @@
 ### Clone this repo and use `yarn` to run the application
 
 Want to collaboration for your project?
-let me know then : 
+let me know then:
 ## azimaahmed36+reactflow@gmail.com
 
 ## Group layout with multiple nodes

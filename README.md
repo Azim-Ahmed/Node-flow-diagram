@@ -7,7 +7,7 @@ let me know then your project mind: : with pro-features and custom logic
 ### chatbot builder-->
 contact me through email to see
 
-## New Drag and drop
+## New Drag and drop with click
 ## https://check-automate.vercel.app/  --(PAID)
 ## Preview
 <img width="1507" alt="image" src="https://github.com/user-attachments/assets/c615f08d-6011-4a09-b8ff-cb13738473be">

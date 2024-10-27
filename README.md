@@ -8,7 +8,7 @@ let me know then your project mind: : with pro-features and custom logic and pro
 ## azimaahmed36+reactflow+github@gmail.com
 ## Let me know if you have project in your mimd
 ### chatbot builder-->
-contact me through email to see
+contact me through email to see and implement
 
 ## See all examples
 ## https://reactflowexample.vercel.app

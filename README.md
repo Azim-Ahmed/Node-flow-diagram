@@ -6,7 +6,7 @@ Want to collaboration for your project? Let's do this is for your brain childs
 
 let me know then your project mind: : with pro-features and custom logic
 ## azimaahmed36+reactflow+github@gmail.com
-## Let me know if you have project in your mimd
+## Let me know if you have project in your mind
 ### chatbot builder-->
 contact me through email to see and implement
 

@@ -1,4 +1,4 @@
-### Clone this repo and use `yarn` to run the application
+### Clone this repo and use `yarn` to run the applications
 ### this is based on v-10, 11 ->-> will make version 12 if need
 Want to collaboration for your project? Let's do this is for your brain childer
 

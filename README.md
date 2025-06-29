@@ -1,6 +1,6 @@
 ### Clone this repo and use `yarn` to run the applications
 ### this is based on v-10, 11 ->-> will make version 12 if need
-Want to collaboration for your project? Let's do this is for your brain childen
+Want to collaboration for your project? Let's do this is for your brain children
 
 <a href="https://www.buymeacoffee.com/azimahmed" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 

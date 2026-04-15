@@ -5,7 +5,7 @@
 
 -----------
 
-# 🌟 Why This Repository Matter
+# 🌟 Why This Repository Matters
 Perfect for developers building:
 
 - ⚡ **Automation Workflow Builders**  
